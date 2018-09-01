@@ -2,18 +2,25 @@
 #define FUNCTION_HPP_
 
 
-#include "lista_d_enla.hpp"
-class Function
-{
+#include "Lista.h"
+#include <iostream>
 
-public:
-
-	struct Punto
+struct Punto
 	{
 		double x_,y_;
 		Punto(double x = 0, double y = 0):x_(x),y_(y){}
 	};
 
+
+
+
+
+class Function
+{
+
+public:
+
+	
 
 	Function(double , double );
 	void add(double, double );
@@ -25,12 +32,15 @@ public:
 	~Function();
 
 
+	friend std::ostream& operator <<(std::ostream& os, const Function& f);
+
+
 
 
 private:
 
 
-	Lista<Punto> saltos;
+	Lista<Punto> saltos{};
 
 };
 
@@ -49,6 +59,8 @@ void Function::add(double x, double y)
 		saltos.elemento(p).y_ = y;
 	else if(p!= saltos.fin())
 			saltos.insertar(Punto(x,y), p);
+		else
+			saltos.insertar(Punto(x,y),p);
 
 
 
@@ -67,7 +79,9 @@ void Function::del(double x)
 	else if(p!=saltos.fin())
 			saltos.eliminar(saltos.anterior(p));
 
-	if(p!=saltos.fin() && p!=saltos.primera() && saltos.elemento(saltos.anterior(p)).y_ == saltos.elemento(p).y_)
+	// p = saltos.siguiente(p);
+
+	 if(p!=saltos.fin() && p!=saltos.primera() && saltos.elemento(saltos.anterior(p)).y_ == saltos.elemento(p).y_)
 		saltos.eliminar(p);
 
 
@@ -134,6 +148,21 @@ void Function::trans(double w, double z)
 		p = saltos.siguiente(p);
 
 	}
+}
+
+Function::~Function(){saltos.~Lista();}
+
+std::ostream& operator <<(std::ostream& os, const Function& f)
+{
+	os<<"<| |";
+	for(Lista<Punto>::posicion p = f.saltos.primera(); p!= f.saltos.fin(); p = f.saltos.siguiente(p))
+	{
+		os<<" Punto("<<f.saltos.elemento(p).x_<<" , "<<f.saltos.elemento(p).y_<<") | ";
+	}
+
+	os<<"|>"<<std::endl;
+
+	return os;
 }
 
 
