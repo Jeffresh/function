@@ -2,7 +2,7 @@
 #define FUNCTION_HPP_
 
 
-#include "Lista.h"
+#include "lista_d_enla.hpp"
 #include <iostream>
 
 struct Punto
@@ -32,7 +32,7 @@ public:
 	~Function();
 
 
-	friend std::ostream& operator <<(std::ostream& os, const Function& f);
+	friend std::ostream& operator <<(std::ostream& os,  const Function& f);
 
 
 
@@ -50,7 +50,7 @@ inline Function::Function(double x, double y) { saltos.insertar(Punto(x,y),salto
 
 void Function::add(double x, double y)
 {
-	Lista<Punto>::posicion p = saltos.siguiente(saltos.primera());
+	Lista<Punto>::posicion p = saltos.primera();
 
 	while(p != saltos.fin() && saltos.elemento(p).x_ < x)
 		p = saltos.siguiente(p);
@@ -68,7 +68,7 @@ void Function::add(double x, double y)
 
 void Function::del(double x)
 {
-	Lista<Punto>::posicion p = saltos.siguiente(saltos.primera());
+	Lista<Punto>::posicion p = saltos.primera();
 
 	while(p!= saltos.fin() && saltos.elemento(p).x_ < x)
 		p = saltos.siguiente(p);
@@ -76,17 +76,24 @@ void Function::del(double x)
 
 	if(p!=saltos.fin() && saltos.elemento(p).x_ == x)
 		saltos.eliminar(p);
-	else if(p!=saltos.fin())
-			saltos.eliminar(saltos.anterior(p));
+	else 
+		if(p!=saltos.fin() && p!= saltos.primera())
+		{
+			p = saltos.anterior(p);
+			saltos.eliminar(p);
+		}
 
-	// p = saltos.siguiente(p);
-
-	 if(p!=saltos.fin() && p!=saltos.primera() && saltos.elemento(saltos.anterior(p)).y_ == saltos.elemento(p).y_)
-		saltos.eliminar(p);
+	
 
 
-
+	 if( p!=saltos.primera() && p!= saltos.fin() && saltos.elemento(saltos.anterior(p)).y_ == saltos.elemento(p).y_ )
+	 	saltos.eliminar(p);
+	
 }
+
+
+
+
 
 double Function::value(double x)const
 {
@@ -95,7 +102,7 @@ double Function::value(double x)const
 		p = saltos.siguiente(p);
 
 
-	return (saltos.elemento(p).x_ == x) ? saltos.elemento(p).y_ : 0 ;
+	return (saltos.elemento(p).x_ == x) ? saltos.elemento(p).y_ : saltos.elemento(saltos.anterior(p)).y_ ;
 
 }
 
@@ -152,12 +159,12 @@ void Function::trans(double w, double z)
 
 Function::~Function(){saltos.~Lista();}
 
-std::ostream& operator <<(std::ostream& os, const Function& f)
+std::ostream& operator <<(std::ostream& os,  const Function& f)
 {
 	os<<"<| |";
 	for(Lista<Punto>::posicion p = f.saltos.primera(); p!= f.saltos.fin(); p = f.saltos.siguiente(p))
 	{
-		os<<" Punto("<<f.saltos.elemento(p).x_<<" , "<<f.saltos.elemento(p).y_<<") | ";
+		os<<" Point("<<f.saltos.elemento(p).x_<<" , "<<f.saltos.elemento(p).y_<<") | ";
 	}
 
 	os<<"|>"<<std::endl;
