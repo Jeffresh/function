@@ -1,6 +1,8 @@
 #ifndef FUNCTION_HPP_
 #define FUNCTION_HPP_
 
+
+#include "lista_d_enla.hpp"
 class Function
 {
 
@@ -14,7 +16,7 @@ public:
 
 
 	Function(double , double );
-	void Add(double, double );
+	void add(double, double );
 	void del(double);
 	double value(double x)const;
 	double min()const;
@@ -28,7 +30,7 @@ public:
 private:
 
 
-	Lista<Puntos> saltos;
+	Lista<Punto> saltos;
 
 };
 
@@ -36,12 +38,12 @@ private:
 
 inline Function::Function(double x, double y) { saltos.insertar(Punto(x,y),saltos.primera());}
 
-void Function::dad(double x, double y)
+void Function::add(double x, double y)
 {
-	Lista<Punto>::posicion p = saltos.primera();
+	Lista<Punto>::posicion p = saltos.siguiente(saltos.primera());
 
 	while(p != saltos.fin() && saltos.elemento(p).x_ < x)
-		p = p.siguiente(p);
+		p = saltos.siguiente(p);
 
 	if(p!= saltos.fin() && saltos.elemento(p).x_==x)
 		saltos.elemento(p).y_ = y;
@@ -54,14 +56,16 @@ void Function::dad(double x, double y)
 
 void Function::del(double x)
 {
-	Lista<Punto>::posicion p = saltos.primera();
+	Lista<Punto>::posicion p = saltos.siguiente(saltos.primera());
 
 	while(p!= saltos.fin() && saltos.elemento(p).x_ < x)
-		p = p.siguiente(p);
+		p = saltos.siguiente(p);
 
 
-	if(p!=saltos.fin() && p!=saltos.primera() && saltos.elementos)
-		saltos.eliminar(saltos.anterior(p));
+	if(p!=saltos.fin() && saltos.elemento(p).x_ == x)
+		saltos.eliminar(p);
+	else if(p!=saltos.fin())
+			saltos.eliminar(saltos.anterior(p));
 
 	if(p!=saltos.fin() && p!=saltos.primera() && saltos.elemento(saltos.anterior(p)).y_ == saltos.elemento(p).y_)
 		saltos.eliminar(p);
@@ -70,15 +74,66 @@ void Function::del(double x)
 
 }
 
-double Function::value(double x)
+double Function::value(double x)const
 {
 	Lista<Punto>::posicion p = saltos.primera();
-	while(p!=saltos.fin() && saltos.elemento().x_< x)
+	while(p!=saltos.fin() && saltos.elemento(p).x_< x)
 		p = saltos.siguiente(p);
 
 
+	return (saltos.elemento(p).x_ == x) ? saltos.elemento(p).y_ : 0 ;
+
+}
+
+double Function::min()const
+{
+	Lista<Punto>::posicion p = saltos.primera();
+	double min{saltos.elemento(p).y_};
+	p = saltos.siguiente(p);
 
 
+	while(p!= saltos.fin())
+	{
+		if(saltos.elemento(p).y_ < min)
+			min = saltos.elemento(p).y_;
+
+		p = saltos.siguiente(p);
+	}
+
+
+	return min;
+}
+
+double Function::max()const
+{
+	Lista<Punto>::posicion p = saltos.primera();
+	double max{saltos.elemento(p).y_};
+	p = saltos.siguiente(p);
+
+	while(p!= saltos.fin())
+	{	
+		if(saltos.elemento(p).y_>max)
+			max = saltos.elemento(p).y_;
+
+		p = saltos.siguiente(p);
+	}
+
+	return max;
+	
+}
+
+
+void Function::trans(double w, double z)
+{
+
+	Lista<Punto>::posicion p = saltos.primera();
+
+	while(p!=saltos.fin())
+	{
+		saltos.elemento(p).x_ += w; saltos.elemento(p).y_ += z;
+		p = saltos.siguiente(p);
+
+	}
 }
 
 

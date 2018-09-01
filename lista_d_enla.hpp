@@ -1,6 +1,8 @@
 #ifndef LISTA_D_ENLA_HPP
 #define LISTA_D_ENLA_HPP
 
+#include<cassert>
+
 template<typename T>
 class Lista
 {
@@ -31,7 +33,7 @@ private:
 	struct nodo
 	{
 		T elto;
-		nodo* ant, sig;
+		nodo *ant, *sig;
 
 		nodo(const T& x, nodo* a = 0, nodo* s = 0) :
 		elto{x},
@@ -39,7 +41,7 @@ private:
 		sig{s}{}
 	};
 
-	L;
+	nodo* L;
 
 	void copiar(const Lista<T>& L);
 };
@@ -48,13 +50,13 @@ template<typename T>
 void Lista<T>::copiar(const Lista<T>& l)
 {
 	nodo* p = (l.L)->sig;
-	L= new(nodo(T()));
+	L= new nodo(T());
 
 	L->ant = L->sig = L;
 
 	while(p!=l.L)
 	{
-		L->ant=L->ant->sig = new nodo(p->elto,L->ant,L)
+		L->ant=L->ant->sig = new nodo(p->elto,L->ant,L);
 		p= p->sig;
 	}		
 }
@@ -65,7 +67,7 @@ L{new nodo(T())}
 {L->ant=L->sig=L;}
 
 template<typename T>
-inline Lista<T>::Lista(const Lista<T> l)
+inline Lista<T>::Lista(const Lista<T>& l)
 {
 	copiar(l);
 }
@@ -99,14 +101,14 @@ inline typename Lista<T>::posicion Lista<T>::fin()const
 }
 
 template<typename T>
-inline typename Lista<T>::posicion Lista<T>::siguiente(typename Lista<T>::posicion p)
+inline typename Lista<T>::posicion Lista<T>::siguiente(typename Lista<T>::posicion p)const
 {
 	return p->sig;
 }
 
 
 template<typename T>
-inline typename Lista<T>::posicion Lista<T>::anterior(typename Lista<T>posicion p)
+inline typename Lista<T>::posicion Lista<T>::anterior(typename Lista<T>::posicion p)const
 {
 	return p->ant;
 }
@@ -130,7 +132,7 @@ typename Lista<T>::posicion Lista<T>::buscar(const T& x)
 template<typename T>
 void Lista<T>::insertar(const T& x, typename Lista<T>::posicion p)
 {
-	p->sig = p->sig->ant= new nodo(x,p,p->sig)
+	p->sig = p->sig->ant= new nodo(x,p,p->sig);
 }
 
 
@@ -140,7 +142,7 @@ template<typename T>
 void Lista<T>::eliminar(typename Lista<T>::posicion p)
 {
 
-	assert(p->sig!=L) // no borrar la cabecera
+	assert(p->sig!=L); // no borrar la cabecera
 
 	nodo *q = p->sig;
 
@@ -154,7 +156,7 @@ void Lista<T>::eliminar(typename Lista<T>::posicion p)
 template<typename T>
 inline const T& Lista<T>::elemento(typename Lista<T>::posicion p)const
 {
-	assert(p->sig-> != L);
+	assert(p->sig != L);
 	return p->sig->elto;
 }
 
